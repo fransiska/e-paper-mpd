@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+from subprocess import check_output
 import logging
 import time
 from PIL import Image,ImageDraw,ImageFont
@@ -18,7 +19,7 @@ class AlbumDrawer():
         self.height = size[1]
         logging.info("Drawing to {}x{}px".format(size[0],size[1]))
 
-    def get_image(self):
+    def create_example_image(self):
         Himage = Image.new('1', (self.width, self.height), 255)  # 255: clear the frame
         draw = ImageDraw.Draw(Himage)
         draw.text((10, 0), 'hello world', font = font24, fill = 0)
@@ -33,6 +34,12 @@ class AlbumDrawer():
         draw.rectangle((80, 50, 130, 100), fill = 0)
         draw.chord((200, 50, 250, 100), 0, 360, fill = 0)
         return Himage
+
+    def create_album_image(self, title):
+        img = Image.new('1', (self.width, self.height), 255)  # 255: clear the frame
+        draw = ImageDraw.Draw(img)
+        draw.text((10, 0), title, font=font24, fill=0)
+        return img
 
 class Epd4in2Controller():
     def __init__(self):
@@ -54,9 +61,29 @@ class Epd4in2Controller():
     def get_size(self):
         return self.epd.width, self.epd.height
 
-if __name__ == "__main__":
-    epd = Epd4in2Controller()
-    drawer = AlbumDrawer(epd.get_size())
-    epd.display(drawer.get_image())
-    time.sleep(2)
+class MpdController():
+    def __init__(self, host):
+        self.host = host
 
+    def get_current(self):
+        return check_output(["mpc", "-h", self.host, "current"])
+
+class MpdDisplayer():
+    def __init__(self, host):
+        self.epd = Epd4in2Controller()
+        self.drawer = AlbumDrawer(self.epd.get_size())
+        self.mpd = MpdController(host)
+
+    def show_song(self):
+        # Wait until mpc starts playing
+        while not self.mpd.get_current():
+            time.sleep(1)
+        self.display_song()
+
+    def display_song(self):
+        self.epd.display(self.drawer.create_album_image(self.mpd.get_current()))
+
+if __name__ == "__main__":
+    hostname = os.getenv("MPDHOST", default = "localhost")
+    displayer = MpdDisplayer(hostname)
+    displayer.show_song()
