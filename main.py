@@ -41,6 +41,15 @@ class AlbumDrawer():
         draw.text((10, 0), title, font=font24, fill=0)
         return img
 
+    def create_mono_image(self, path):
+        img = Image.new('1', (self.width, self.height), 255)  # 255: clear the frame
+        image_file = Image.open(path) # open colour image
+        if image_file.size[0] > self.width or image_file.size[1] > self.height:
+            image_file.thumbnail((self.width,self.height), Image.ANTIALIAS)
+        image_file = image_file.convert('1') # convert image to black and white
+        img.paste(image_file, (0,0))
+        return img
+
 class Epd4in2Controller():
     def __init__(self):
         self.epd = epd4in2.EPD()
@@ -78,12 +87,18 @@ class MpdDisplayer():
         # Wait until mpc starts playing
         while not self.mpd.get_current():
             time.sleep(1)
-        self.display_song()
+        self.display_current_mpd()
 
-    def display_song(self):
+    def display_current_mpd(self):
         self.epd.display(self.drawer.create_album_image(self.mpd.get_current()))
+
+    def display_image(self, path):
+        logging.info("Displaying image {}".format(path))
+        self.epd.display(self.drawer.create_mono_image(path))
 
 if __name__ == "__main__":
     hostname = os.getenv("MPDHOST", default = "localhost")
     displayer = MpdDisplayer(hostname)
+    displayer.display_image("/home/pi/gone.jpg")
+    exit()
     displayer.show_song()
