@@ -16,10 +16,13 @@ class MpdDisplayer():
         self.mpd = MpdController(host)
 
     def show_song(self):
+        self.wait_for_mpc()
+        self.display_current_mpd()
+
+    def wait_for_mpc(self):
         # Wait until mpc starts playing
         while not self.mpd.get_current():
             time.sleep(1)
-        self.display_current_mpd()
 
     def display_current_mpd(self):
         self.epd.display(self.drawer.create_album_image(self.mpd.get_current()))
@@ -28,3 +31,6 @@ class MpdDisplayer():
         logging.info("Displaying image {}".format(path))
         self.epd.display(self.drawer.create_mono_image(path))
 
+    def print_info(self):
+        print(self.mpd.get_info())
+        
