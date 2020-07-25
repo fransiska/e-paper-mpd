@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import time
 
 from .epd_controller import EpdController
 from .album_drawer import AlbumDrawer
@@ -25,12 +26,14 @@ class MpdDisplayer():
             time.sleep(1)
 
     def display_current_mpd(self):
-        self.epd.display(self.drawer.create_album_image(self.mpd.get_current()))
+        info = self.mpd.get_info()
+        print(info)
+        self.epd.display(self.drawer.create_album_image(info))
 
     def display_image(self, path):
         logging.info("Displaying image {}".format(path))
         self.epd.display(self.drawer.create_mono_image(path))
 
     def print_info(self):
-        print(self.mpd.get_info())
-        
+        info = self.mpd.get_info()
+        print(info)
