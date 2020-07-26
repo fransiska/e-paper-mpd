@@ -7,7 +7,7 @@ import time
 
 from epapermpd.mpd_displayer import MpdDisplayer
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.ERROR)
 
 if __name__ == "__main__":
     hostname = os.getenv("MPDHOST", default = "localhost")

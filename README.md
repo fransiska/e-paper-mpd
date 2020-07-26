@@ -12,6 +12,24 @@ To use with different host:
 
 ```bash
 sudo MPDHOST="raspberrypi.local" python3 main.py
+
+# without sudo
+export MPDHOST="raspberrypi.local"
+python3 main.py
+```
+
+or just 
+
+```bash
+make run
+```
+
+## Install Service
+
+Assuming this repository is located at `/home/pi/Git/e-paper-mpd`
+
+```bash
+sudo make install
 ```
 
 ## MPD Cheatsheet

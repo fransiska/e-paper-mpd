@@ -5,8 +5,6 @@ import logging
 
 from waveshare_epd import epd4in2
 
-logging.basicConfig(level=logging.DEBUG)
-
 class EpdController():
     def __init__(self, size="4in2"):
         if size == "4in2":

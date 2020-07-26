@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import os
+import time
 import glob
 from subprocess import check_output
 import logging
-
-logging.basicConfig(level=logging.DEBUG)
 
 class MpdController():
     def __init__(self, host):
@@ -50,3 +49,12 @@ class MpdController():
             return jpg_list[0]
         else:
             return ""
+
+    def wait_for_track_change(self):
+        check_output(["mpc", "-h", self.host, "idle", "player"])
+
+    def wait_until_playing(self):
+        # Wait until mpc starts playing
+        while not self.get_current():
+            time.sleep(1)
+

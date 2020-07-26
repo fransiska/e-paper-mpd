@@ -6,9 +6,8 @@ from PIL import Image,ImageDraw,ImageFont
 import textwrap
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
-
-font_face = os.path.join("waveshare_epd", 'Font.ttc')
+font_face = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "/waveshare_epd", 'Font.ttc')
+logging.error(font_face)
 
 class AlbumDrawer():
     def __init__(self, size, text_width, font_size, image_size):
@@ -19,7 +18,7 @@ class AlbumDrawer():
         self.text_width = text_width
         self.sub_text_width = text_width+10
         self.image_size = image_size
-        logging.info("Drawing to {}x{}px".format(size[0],size[1]))
+        logging.debug("Drawing to {}x{}px".format(size[0],size[1]))
 
     def create_album_image(self, info):
         img = Image.new('1', (self.width, self.height), 255)  # 255: clear the frame

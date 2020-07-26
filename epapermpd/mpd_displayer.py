@@ -8,8 +8,6 @@ from .epd_controller import EpdController
 from .album_drawer import AlbumDrawer
 from .mpd_controller import MpdController
 
-logging.basicConfig(level=logging.DEBUG)
-
 class MpdDisplayer():
     def __init__(self, host):
         self.epd = EpdController()
@@ -18,16 +16,24 @@ class MpdDisplayer():
         self.mpd = MpdController(host)
 
     def show_song(self):
-        self.wait_for_mpc()
-        self.display_current_mpd()
-
-    def wait_for_mpc(self):
-        # Wait until mpc starts playing
-        while not self.mpd.get_current():
+        current_file = ""
+        while True:
+            try:
+                logging.debug("Waiting until playing")
+                self.mpd.wait_until_playing()
+                info = self.mpd.get_info()
+                if info["title"] != current_file:
+                    logging.debug("Displaying new info")
+                    self.display_info(info)
+                    current_file = info["title"]
+                    if self.mpd.get_current():
+                        logging.debug("Waiting for track change")
+                        self.mpd.wait_for_track_change()
+            except Exception as e:
+                logging.info("Error in displaying current song: {}".format(e))
             time.sleep(1)
 
-    def display_current_mpd(self):
-        info = self.mpd.get_info()
+    def display_info(self, info):
         img = self.drawer.create_album_image(info)
         self.epd.display(img)
 
