@@ -13,7 +13,8 @@ logging.basicConfig(level=logging.DEBUG)
 class MpdDisplayer():
     def __init__(self, host):
         self.epd = EpdController()
-        self.drawer = AlbumDrawer(self.epd.get_size())
+        size = self.epd.get_size()
+        self.drawer = AlbumDrawer((size[1], size[0]), 26, 22, (270,270))
         self.mpd = MpdController(host)
 
     def show_song(self):
@@ -27,8 +28,8 @@ class MpdDisplayer():
 
     def display_current_mpd(self):
         info = self.mpd.get_info()
-        print(info)
-        self.epd.display(self.drawer.create_album_image(info))
+        img = self.drawer.create_album_image(info)
+        self.epd.display(img)
 
     def display_image(self, path):
         logging.info("Displaying image {}".format(path))

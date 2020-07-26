@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import glob
 from subprocess import check_output
 import logging
 
@@ -22,7 +23,7 @@ class MpdController():
             logging.error("Error in getting info {}".format(e))
             value = ""
         return value
-       
+
     def get_info(self):
         info = {}
         for i in ["artist","album","title","track","time","file"]:
@@ -43,8 +44,9 @@ class MpdController():
 
     def get_album_image(self, filename):
         image_filename = "album.jpg"
-        fullpath = os.path.dirname(self.music_directory + "/" + filename) + "/" + image_filename
-        if os.path.exists(fullpath):
-            return fullpath
+        folder_name = os.path.dirname(self.music_directory + "/" + filename)
+        jpg_list = glob.glob(folder_name + "/*.jpg")
+        if len(jpg_list):
+            return jpg_list[0]
         else:
             return ""
