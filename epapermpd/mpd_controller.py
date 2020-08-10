@@ -42,9 +42,14 @@ class MpdController():
         return ""
 
     def get_album_image(self, filename):
-        image_filename = "album.jpg"
         folder_name = os.path.dirname(self.music_directory + "/" + filename)
-        jpg_list = glob.glob(folder_name + "/*.jpg")
+        # Try the default names first
+        for name in  ["cover.jpg","album.jpg","front.jpg"]:
+            file_path = folder_name + "/" + name
+            if os.path.isfile(file_path):
+                return file_path
+        # If not, get any jpg
+        jpg_list = glob.glob(glob.escape(folder_name) + "/*.jpg")
         if len(jpg_list):
             return jpg_list[0]
         else:
