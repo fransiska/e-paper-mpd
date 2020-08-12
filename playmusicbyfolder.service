@@ -1,0 +1,10 @@
+[Unit]
+Description=play random music
+After=mpd.service
+
+[Service]
+ExecStartPre=/bin/bash -c 'while [ ! -d /share/music ]; do sleep 1; done'
+ExecStart=python3 /home/pi/Git/e-paper-mpd/play_music_by_folder.py
+
+[Install]
+WantedBy=multi-user.target

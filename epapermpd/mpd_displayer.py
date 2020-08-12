@@ -23,14 +23,14 @@ class MpdDisplayer():
                 self.mpd.wait_until_playing()
                 info = self.mpd.get_info()
                 if info["title"] != current_file:
-                    logging.debug("Displaying new info")
+                    logging.debug("Displaying new info {}".format(info))
                     self.display_info(info)
                     current_file = info["title"]
                     if self.mpd.get_current():
                         logging.debug("Waiting for track change")
                         self.mpd.wait_for_track_change()
             except Exception as e:
-                logging.info("Error in displaying current song: {}".format(e))
+                logging.error("Error in displaying current song: {}".format(e))
             time.sleep(1)
 
     def display_info(self, info):
@@ -43,4 +43,3 @@ class MpdDisplayer():
 
     def print_info(self):
         info = self.mpd.get_info()
-        print(info)

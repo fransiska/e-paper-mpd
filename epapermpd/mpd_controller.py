@@ -2,18 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import os
+from subprocess import check_output
 import time
 import glob
-from subprocess import check_output
 import logging
+from . import mpd_functions
 
 class MpdController():
     def __init__(self, host):
         self.host = host
         self.music_directory = self.get_music_directory()
-
-    def get_current(self):
-        return check_output(["mpc", "-h", self.host, "current"])
 
     def get_value(self, key):
         try:
@@ -55,11 +53,11 @@ class MpdController():
         else:
             return ""
 
+    def get_current(self):
+        return mpd_functions.get_current(self.host)
+
     def wait_for_track_change(self):
-        check_output(["mpc", "-h", self.host, "idle", "player"])
+        mpd_functions.wait_for_idle(self.host)
 
     def wait_until_playing(self):
-        # Wait until mpc starts playing
-        while not self.get_current():
-            time.sleep(1)
-
+        mpd_functions.wait_until_playing(self.host)

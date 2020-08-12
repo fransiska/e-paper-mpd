@@ -7,7 +7,6 @@ import textwrap
 import logging
 
 font_face = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "/waveshare_epd", 'Font.ttc')
-logging.error(font_face)
 
 class AlbumDrawer():
     def __init__(self, size, text_width, font_size, image_size):
