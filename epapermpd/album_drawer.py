@@ -42,6 +42,7 @@ class AlbumDrawer():
         if not font:
             font = self.font
         lines = textwrap.wrap(text, width=width)
+        i = 0
         for i in range(len(lines)):
             w, h = draw.textsize(lines[i], font=font)
             draw.text((int((self.width-w)/2), y_padding + i*20), lines[i], font = font, fill = 0)
@@ -49,6 +50,8 @@ class AlbumDrawer():
         return y_padding
 
     def paste_mono_image(self, path, img, pos=(0,0), size=None):
+        if not len(path):
+            return
         if not size:
             size = (self.width, self.height)
         image_file = Image.open(path) # open colour image
