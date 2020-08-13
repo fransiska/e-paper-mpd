@@ -22,7 +22,8 @@ class MpdDisplayer():
                 logging.debug("Waiting until playing")
                 self.mpd.wait_until_playing()
                 info = self.mpd.get_info()
-                if info["title"] != current_file:
+                title = info["title"] if info["title"] else info["file"]
+                if title != current_file:
                     logging.debug("Displaying new info {}".format(info))
                     self.display_info(info)
                     current_file = info["title"]
