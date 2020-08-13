@@ -13,21 +13,6 @@ class MpdController():
         self.host = host
         self.music_directory = self.get_music_directory()
 
-    def get_value(self, key):
-        try:
-            value = check_output(["mpc", "current", "-h", self.host, "-f","'%{}%'".format(key)]).decode('utf8').strip()[1:-1]
-        except Exception as e:
-            logging.error("Error in getting info {}".format(e))
-            value = ""
-        return value
-
-    def get_info(self):
-        info = {}
-        for i in ["artist","album","title","track","time","file"]:
-            info[i] = self.get_value(i)
-        info["image"] = self.get_album_image(info["file"])
-        return info
-
     def get_music_directory(self):
         for filename in ["~/.mpdconf","/etc/mpd.conf"]:
             if os.path.exists(filename):
@@ -55,6 +40,9 @@ class MpdController():
 
     def get_current(self):
         return mpd_functions.get_current(self.host)
+
+    def get_info(self):
+        return mpd_functions.get_info(self.host)
 
     def wait_for_track_change(self):
         mpd_functions.wait_for_idle(self.host)
