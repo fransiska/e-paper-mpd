@@ -9,11 +9,10 @@ from .album_drawer import AlbumDrawer
 from .mpd_controller import MpdController
 
 class MpdDisplayer():
-    def __init__(self, host):
-        self.epd = EpdController()
-        size = self.epd.get_size()
-        self.drawer = AlbumDrawer((size[1], size[0]), 26, 22, (270,270))
-        self.mpd = MpdController(host)
+    def __init__(self, settings):
+        self.epd = EpdController(settings["type"])
+        self.drawer = AlbumDrawer((settings["size"]["width"], settings["size"]["height"]), 26, 22, (270,270))
+        self.mpd = MpdController(settings["host"])
 
     def show_song(self):
         current_file = ""
