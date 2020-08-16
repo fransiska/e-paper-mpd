@@ -3,6 +3,7 @@
 
 import logging
 import time
+import threading
 
 from .epd_controller import EpdController
 from .album_drawer import AlbumDrawer
@@ -13,33 +14,43 @@ class MpdDisplayer():
         self.epd = EpdController(settings["type"])
         self.drawer = AlbumDrawer((settings["size"]["width"], settings["size"]["height"]), 26, 22, (270,270))
         self.mpd = MpdController(settings["host"])
+        self.info = {}
 
-    def show_song(self):
+    def get_info(self):
         current_file = ""
         while True:
             try:
-                logging.debug("Waiting until playing")
                 self.mpd.wait_until_playing()
                 info = self.mpd.get_info()
                 title = info["title"] if info["title"] else info["file"]
                 if title != current_file:
-                    logging.debug("Displaying new info {}".format(info))
-                    self.display_info(info)
+                    with self.mutex:
+                        self.info = info
+                    try:
+                        self.sem.release()
+                    except Exception as e:
+                        logging.debug("Semaphore not released: {}".format(e))
                     current_file = info["title"]
-                    if self.mpd.get_current():
-                        logging.debug("Waiting for track change")
-                        self.mpd.wait_for_track_change()
+                    self.mpd.wait_for_track_change()
             except Exception as e:
                 logging.error("Error in displaying current song: {}".format(e))
             time.sleep(1)
 
-    def display_info(self, info):
+    def display_info(self):
+        info = {}
+        while True:
+            self.sem.acquire()
+            with self.mutex:
+                info = dict(self.info)
+            try: self.display_album_info(info)
+            except: pass
+
+    def display_album_info(self, info):
         img = self.drawer.create_album_image(info)
         self.epd.display(img)
 
-    def display_image(self, path):
-        logging.info("Displaying image {}".format(path))
-        self.epd.display(self.drawer.create_mono_image(path))
-
-    def print_info(self):
-        info = self.mpd.get_info()
+    def run(self):
+        self.mutex = threading.Lock()
+        self.sem = threading.BoundedSemaphore(1)
+        mpd_thread = threading.Thread(target=self.get_info).start()
+        epd_thread = threading.Thread(target=self.display_info).start()

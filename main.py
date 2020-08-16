@@ -19,4 +19,4 @@ if __name__ == "__main__":
         }
     }
     displayer = MpdDisplayer(settings)
-    displayer.show_song()
+    displayer.run()
