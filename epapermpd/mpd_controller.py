@@ -42,7 +42,9 @@ class MpdController():
         return mpd_functions.get_current(self.host)
 
     def get_info(self):
-        return mpd_functions.get_info(self.host)
+        info = mpd_functions.get_info(self.host)
+        info.update({"image":self.get_album_image(info["file"])})
+        return info
 
     def wait_for_track_change(self):
         mpd_functions.wait_for_idle(self.host)
