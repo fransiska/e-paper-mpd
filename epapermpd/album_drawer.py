@@ -9,7 +9,7 @@ import logging
 font_face = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "/waveshare_epd", 'Font.ttc')
 
 class AlbumDrawer():
-    def __init__(self, size, text_width, font_size, image_size):
+    def __init__(self, settings):
         self.width = size[0]
         self.height = size[1]
         self.font = ImageFont.truetype(font_face, font_size)

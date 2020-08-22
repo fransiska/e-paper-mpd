@@ -12,8 +12,9 @@ logging.basicConfig(level=logging.ERROR)
 if __name__ == "__main__":
     settings = {
         "host": os.getenv("MPDHOST", default = "localhost"),
-        "type": "4in2",
-        "size": {
+        "type": "1in54b",
+        "image": {
+            "mono": true,
             "width": 300,
             "height": 400
         }

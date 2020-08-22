@@ -5,14 +5,14 @@ import logging
 import time
 import threading
 
+from .mpd_controller import MpdController
 from .epd_controller import EpdController
 from .album_drawer import AlbumDrawer
-from .mpd_controller import MpdController
 
 class MpdDisplayer():
     def __init__(self, settings):
         self.epd = EpdController(settings["type"])
-        self.drawer = AlbumDrawer((settings["size"]["width"], settings["size"]["height"]), 26, 22, (270,270))
+        self.drawer = AlbumDrawer(settings["image"])
         self.mpd = MpdController(settings["host"])
         self.info = {}
 
@@ -46,8 +46,8 @@ class MpdDisplayer():
             except: pass
 
     def display_album_info(self, info):
-        img = self.drawer.create_album_image(info)
-        self.epd.display(img)
+        image = self.drawer.create_album_image(info)
+        self.epd.display(image)
 
     def run(self):
         self.mutex = threading.Lock()

@@ -3,26 +3,24 @@
 
 import logging
 
-from waveshare_epd import epd4in2
+from .epd_4in2_controller import Epd4in2Controller
+from .epd_1in54b_controller import Epd1in54bController
+
+from .album_drawer import AlbumDrawer
 
 class EpdController():
-    def __init__(self, size="4in2"):
+    def __init__(self, size):
         if size == "4in2":
-            self.epd = epd4in2.EPD()
-        self.epd.init()
-
-    def clear(self):
-        logging.info("Clearing")
-        self.epd.Clear()
+            self.epd = Epd4in2Controller()
+        elif size == "1in54b":
+            self.epd = Epd1in54bController()
+        else:
+            raise Exception("Display type is not supported")
 
     def display(self, image):
         try:
             logging.info("Drawing")
-            self.clear()
-            self.epd.display(self.epd.getbuffer(image))
+            self.epd.display(image)
         except Exception as e:
             logging.info("Error: {}".format(e))
-
-    def get_size(self):
-        return self.epd.width, self.epd.height
 
