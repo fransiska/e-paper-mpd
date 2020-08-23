@@ -27,7 +27,7 @@ class MpdController():
     def get_album_image(self, filename):
         folder_name = os.path.dirname(self.music_directory + "/" + filename)
         # Try the default names first
-        for name in  ["cover.jpg","album.jpg","front.jpg"]:
+        for name in  ["album.jpg","cover.jpg","front.jpg"]:
             file_path = folder_name + "/" + name
             if os.path.isfile(file_path):
                 return file_path

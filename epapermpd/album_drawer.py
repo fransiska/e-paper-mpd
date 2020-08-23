@@ -31,9 +31,10 @@ class AlbumDrawer():
         else:
             y_padding = self.write_centered_text(draw, info["file"], self.sub_text_width, y_padding, font=self.sub_font)
 
-        image_pos = (int((self.width-self.image_size[0])/2),int(self.height-self.image_size[1]))
+        image_pos = (0,int(self.height-self.image_size[1]))
+        image_bounding_box = (max(self.width,self.image_size[0]),max(int(self.height-self.image_size[1]),self.image_size[1]))
         try:
-            self.paste_mono_image(info["image"], img, image_pos, size=self.image_size)
+            self.paste_mono_image(info["image"], img, image_pos, size=image_bounding_box)
         except Exception as e:
             logging.error("No image to show: {}".format(e))
         return img
@@ -49,7 +50,7 @@ class AlbumDrawer():
         y_padding += (i+1)*26
         return y_padding
 
-    def paste_mono_image(self, path, img, pos=(0,0), size=None):
+    def paste_mono_image(self, path, img, pos=(0,0), size=None, center=True):
         if not len(path):
             return
         if not size:
@@ -57,6 +58,9 @@ class AlbumDrawer():
         image_file = Image.open(path) # open colour image
         if image_file.size[0] > size[0] or image_file.size[1] > size[1]:
             image_file.thumbnail((size[0],size[1]), Image.ANTIALIAS)
+        if center:
+            pos = (pos[0] + int((size[0]-image_file.size[0])/2),
+                   pos[1] + int((size[1]-image_file.size[1])/2))
         image_file = image_file.convert('1') # convert image to black and white
         img.paste(image_file, pos)
 
