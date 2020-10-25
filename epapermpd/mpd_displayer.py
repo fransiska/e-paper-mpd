@@ -45,24 +45,22 @@ class MpdDisplayer():
                         self.sem.release()
                     except Exception as e:
                         logging.debug("Semaphore not released: {}".format(e))
-                    current_file = info["title"]
-                    self.mpd.wait_for_track_change()
+                    current_file = title
+                self.mpd.wait_for_track_change()
             except Exception as e:
                 logging.error("Error in displaying current song: {}".format(e))
-            time.sleep(1)
 
     def display_info(self):
         info = {}
         while True:
             self.sem.acquire()
             with self.mutex:
-                info = dict(self.info)
-            try: self.display_album_info(info)
-            except: pass
-
-    def display_album_info(self, info):
-        image = self.drawer.create_album_image(info)
-        self.epd.display(image)
+                info = self.info.copy()
+            try:
+                image = self.drawer.create_album_image(info)
+                self.epd.display(image)
+            except Exception as e:
+                logging.error("Error in displaying info: {}".format(e))
 
     def run(self):
         self.mutex = threading.Lock()
