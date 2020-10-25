@@ -57,8 +57,9 @@ class MpdDisplayer():
 
     def display_info(self):
         info = {}
-        while True:
-            self.sem.acquire()
+        self.sem.acquire()
+
+        while True and self.alive:
             with self.mutex:
                 info = self.info.copy()
             try:
@@ -67,15 +68,23 @@ class MpdDisplayer():
             except Exception as e:
                 logging.error("Error in displaying info: {}".format(e))
 
+            self.sem.acquire()
     def run(self):
+        self.alive = True
         self.mutex = threading.Lock()
         self.sem = threading.BoundedSemaphore(1)
+
         try:
             mpd_thread = threading.Thread(target=self.get_info).start()
             epd_thread = threading.Thread(target=self.display_info).start()
             signal.pause()
+
         except (KeyboardInterrupt, SystemExit) as e:
             logging.error("Keyboard interrupted")
+
+            self.alive = False
+            try: self.sem.release()
+            except Exception as e: logging.debug("RUN: Semaphore not released: {}".format(e))
             sys.exit(e)
         except Exception as e:
             logging.error("Other exception: {}".format(e))
