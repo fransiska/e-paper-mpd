@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import signal
+import sys
 import logging
 import time
 import threading
@@ -47,6 +49,9 @@ class MpdDisplayer():
                         logging.debug("Semaphore not released: {}".format(e))
                     current_file = title
                 self.mpd.wait_for_track_change()
+            except (KeyboardInterrupt, SystemExit) as e:
+                logging.debug("Keyboard interrupted in loop")
+                sys.exit(e)
             except Exception as e:
                 logging.error("Error in displaying current song: {}".format(e))
 
@@ -65,5 +70,12 @@ class MpdDisplayer():
     def run(self):
         self.mutex = threading.Lock()
         self.sem = threading.BoundedSemaphore(1)
-        mpd_thread = threading.Thread(target=self.get_info).start()
-        epd_thread = threading.Thread(target=self.display_info).start()
+        try:
+            mpd_thread = threading.Thread(target=self.get_info).start()
+            epd_thread = threading.Thread(target=self.display_info).start()
+            signal.pause()
+        except (KeyboardInterrupt, SystemExit) as e:
+            logging.error("Keyboard interrupted")
+            sys.exit(e)
+        except Exception as e:
+            logging.error("Other exception: {}".format(e))
