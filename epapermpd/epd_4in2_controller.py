@@ -11,13 +11,5 @@ class Epd4in2Controller(EpdControllerBase):
         self.epd = epd4in2.EPD()
         self.epd.init()
 
-    def clear(self):
-        self.epd.Clear()
-
     def display_image(self, image):
-        try:
-            logging.info("Drawing")
-            self.clear()
-            self.epd.display(self.epd.getbuffer(image))
-        except Exception as e:
-            logging.info("Error: {}".format(e))
+        self.epd.display(self.epd.getbuffer(image[0]))

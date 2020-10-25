@@ -7,17 +7,19 @@ import textwrap
 import logging
 
 font_face = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "/waveshare_epd", 'Font.ttc')
+font_size = 20
+text_width = 10
 
 class AlbumDrawer():
     def __init__(self, settings):
-        self.width = size[0]
-        self.height = size[1]
+        self.width = settings["width"]
+        self.height = settings["height"]
         self.font = ImageFont.truetype(font_face, font_size)
         self.sub_font = ImageFont.truetype(font_face, font_size-4)
         self.text_width = text_width
         self.sub_text_width = text_width+10
-        self.image_size = image_size
-        logging.debug("Drawing to {}x{}px".format(size[0],size[1]))
+        self.image_size = [self.width, self.height]
+        logging.debug("Drawing to {}x{}px".format(self.image_size[0],self.image_size[1]))
 
     def create_album_image(self, info):
         img = Image.new('1', (self.width, self.height), 255)  # 255: clear the frame

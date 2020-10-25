@@ -10,16 +10,16 @@ class EpdControllerBase():
     def get_size(self):
         return self.epd.width, self.epd.height
 
-    def display(self, info):
+    def display(self, image):
         try:
             logging.info("Drawing")
             self.clear()
-            self.display_image(info)
+            self.display_image(image)
         except Exception as e:
             logging.info("Error: {}".format(e))
 
     def clear(self):
-        raise NotImplementedError
+        self.epd.Clear()
 
     def display_image(self, image):
         raise NotImplementedError

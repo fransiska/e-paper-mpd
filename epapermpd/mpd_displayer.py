@@ -9,10 +9,25 @@ from .mpd_controller import MpdController
 from .epd_controller import EpdController
 from .album_drawer import AlbumDrawer
 
+DISPLAY_TYPES = {
+    "1in54b": {
+        "color": 2,
+        "width": 200,
+        "height": 200
+    },
+    "4in2": {
+        "color": 1,
+        "width": 300,
+        "height": 400
+    }   
+}
+
 class MpdDisplayer():
     def __init__(self, settings):
+        if settings["type"] not in DISPLAY_TYPES:
+            raise Exception("Display not supported")
         self.epd = EpdController(settings["type"])
-        self.drawer = AlbumDrawer(settings["image"])
+        self.drawer = AlbumDrawer(DISPLAY_TYPES[settings["type"]])
         self.mpd = MpdController(settings["host"])
         self.info = {}
 

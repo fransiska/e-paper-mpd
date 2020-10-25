@@ -13,7 +13,7 @@ def get_current(host="localhost", info=""):
 
 def get_info(host="localhost", info=["artist","album","title","track","time","file"]):
     formatted_info = "\n".join(["%{}%".format(i) for i in info])
-    raw_info = get_current(host, formatted_info).decode().split('\n')
+    raw_info = get_current(host, formatted_info).decode("utf8").split('\n')
     json_info = {}
     for i in range(len(info)):
         json_info[info[i]] = raw_info[i]
